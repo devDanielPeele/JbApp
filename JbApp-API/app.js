@@ -1,15 +1,49 @@
-const express = require('express');
+const express = require("express");
+const bodyParser = require("body-parser");
 
 const app = express();
 
-app.use((req, res, next) => {
-    console.log('First middleware');
-    next();
-});
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
-    res.send('Second middleware, Hello from express');
-    
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+  );
+  next();
+});
+
+app.post("/api/posts", (req, res, next) => {
+    const post = req.body;
+    console.log(post);
+    res.status(201).json({
+        message: "Post added successfully!"
+    });
+});
+
+app.get("/api/posts", (req, res, next) => {
+  const posts = [
+    {
+      id: "jhs78",
+      title: "server side post",
+      content: "content of server side post"
+    },
+    {
+      id: "gfgf77",
+      title: "second server side post",
+      content: "second content of server side post"
+    }
+  ];
+  res.status(200).json({
+    message: "Posts fetched successfully!",
+    posts: posts
+  });
 });
 
 module.exports = app;
